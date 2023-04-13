@@ -1,0 +1,97 @@
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string City { get; set; }
+    public int Age { get; set; }
+}
+public List<User> ReadData(string csvFilePath)
+{
+    List<User> users = new List<User>();
+
+    using (var reader = new StreamReader(csvFilePath))
+    {
+        while (!reader.EndOfStream)
+        {
+            var line = reader.ReadLine();
+            var values = line.Split(',');
+
+            int id = int.Parse(values[0]);
+            string name = values[1];
+            string city = values[2];
+            int age = int.Parse(values[3]);
+
+            User user = new User { Id = id, Name = name, City = city, Age = age };
+            users.Add(user);
+        }
+    }
+
+    return users;
+}
+public bool IsPrime(int number)
+{
+    if (number < 2)
+        return false;
+
+    for (int i = 2; i <= Math.Sqrt(number); i++)
+    {
+        if (number % i == 0)
+            return false;
+    }
+
+    return true;
+}
+
+public bool IsPalindrome(int number)
+{
+    string numberString = number.ToString();
+    char[] numberCharArray = numberString.ToCharArray();
+    Array.Reverse(numberCharArray);
+    string reversedNumberString = new string(numberCharArray);
+
+    return numberString == reversedNumberString;
+}
+
+public bool IsOdd(int number)
+{
+    return number % 2 == 1;
+}
+
+public bool IsPrimePalindrome(int number)
+{
+    return IsPrime(number) && IsPalindrome(number);
+}
+
+public bool IsOddPalindrome(int number)
+{
+    return IsOdd(number) && IsPalindrome(number);
+}
+public void SaveNumbersToFile(List<User> users)
+{
+    List<int> primePalindromes = new List<int>();
+    List<int> oddPalindromes = new List<int>();
+
+    foreach (User user in users)
+    {
+        switch (user.Id)
+        {
+            case int id when IsPrimePalindrome(id):
+                primePalindromes.Add(id);
+                break;
+            case int id when IsOddPalindrome(id):
+                oddPalindromes.Add(id);
+                break;
+        }
+    }
+
+    File.WriteAllLines("primePalindromes.txt", primePalindromes.Select(n => n.ToString()));
+    File.WriteAllLines("oddPalindromes.txt", oddPalindromes.Select(n => n.ToString()));
+}
+public string TranslateCity(string cityName)
+{
+    return cityName switch
+    {
+        "تهران" => "Tehran",
+        "مشهد" => "Mashhad",
+        "اصفهان" => "isfan",
+}
